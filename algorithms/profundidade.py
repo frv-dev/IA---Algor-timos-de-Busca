@@ -1,7 +1,7 @@
 import numpy as np
 from DTO.MyList import MyList
 
-def amplitude(matrix: np.ndarray, nodes: list, start, end):
+def profundidade(matrix: np.ndarray, nodes: list, start, end):
     myList_1 = MyList()
     myList_2 = MyList()
     visited = list()
@@ -13,11 +13,10 @@ def amplitude(matrix: np.ndarray, nodes: list, start, end):
     line.append(0)
     visited.append(line)
 
-    flag_1 = False
-    while myList_1.isEmpty() is not True and flag_1 == False:
-        actual = myList_1.deleteFirst()
+    while myList_1.isEmpty() is not True:
+        actual = myList_1.deleteLast()
         index = nodes.index(actual.firstValue)
-        for count_1 in range(len(matrix[index])):
+        for count_1 in range(len(matrix[index]) - 1, -1, -1):
             if matrix[index][count_1]:
                 newValue = nodes[count_1]
             else:
@@ -25,7 +24,10 @@ def amplitude(matrix: np.ndarray, nodes: list, start, end):
             flag = True
             for count_2 in range(len(visited)):
                 if visited[count_2][0] == newValue:
-                    flag = False
+                    if visited[count_2][1] <= (actual.secondValue + 1):
+                        flag = False
+                    else:
+                        visited[count_2][1] = actual.secondValue + 1
                     break
             if flag:
                 myList_1.insertAtBack(actual, newValue, actual.secondValue + 1)
@@ -35,13 +37,8 @@ def amplitude(matrix: np.ndarray, nodes: list, start, end):
                 line.append(actual.secondValue + 1)
                 visited.append(line)
                 if newValue == end:
-                    flag_1 = True
-                    break
+                    path = []
+                    path = myList_2.getTree()
+                    return path
     
-    path = []
-    if flag_1:
-        path = myList_2.getTree()
-    else:
-        path = "Caminho não encontrado"
-    
-    return path
+    return "Caminho não encontrado"
